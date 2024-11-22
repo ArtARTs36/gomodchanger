@@ -2,7 +2,7 @@
 
 gomodchanger - console tool for changing go module path and imports in code files.
 
-install as: `go install github.com/artarts36/gomodchanger`
+Install as: `go install github.com/artarts36/gomodchanger@v0.1.0`
 
 ```
 Usage

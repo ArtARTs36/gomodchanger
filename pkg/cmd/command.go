@@ -1,4 +1,4 @@
-package app
+package cmd
 
 import (
 	"context"
@@ -13,19 +13,23 @@ type Command struct {
 	replacer *replacer.Replacer
 }
 
-type CommandRunParams struct {
+type Params struct {
 	NewModule string
 
 	ProjectDir string
 }
 
-func NewCommand(replacer *replacer.Replacer) *Command {
+func NewCommandWithReplacer(replacer *replacer.Replacer) *Command {
 	return &Command{
 		replacer: replacer,
 	}
 }
 
-func (c *Command) Run(ctx context.Context, params CommandRunParams) error {
+func NewCommand() *Command {
+	return NewCommandWithReplacer(replacer.NewReplacer())
+}
+
+func (c *Command) Run(ctx context.Context, params Params) error {
 	gomod, err := gomodfinder.Find(params.ProjectDir, 1)
 	if err != nil {
 		return fmt.Errorf("failed to find go.mod: %w", err)

@@ -2,8 +2,7 @@ package main
 
 import (
 	"context"
-	"github.com/artarts36/gomodchanger/internal/app"
-	"github.com/artarts36/gomodchanger/internal/replacer"
+	"github.com/artarts36/gomodchanger/pkg/cmd"
 	cli "github.com/artarts36/singlecli"
 )
 
@@ -33,14 +32,14 @@ func main() {
 }
 
 func run(ctx *cli.Context) error {
-	cmd := app.NewCommand(replacer.NewReplacer())
+	command := cmd.NewCommand()
 
 	projectDir := "./"
 	if pd, ok := ctx.GetOpt("project-dir"); ok {
 		projectDir = pd
 	}
 
-	return cmd.Run(ctx.Context, app.CommandRunParams{
+	return command.Run(ctx.Context, cmd.Params{
 		NewModule:  ctx.Args["new-module"],
 		ProjectDir: projectDir,
 	})
