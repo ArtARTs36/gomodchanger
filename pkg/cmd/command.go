@@ -3,14 +3,16 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"log/slog"
+
+	"github.com/artarts36/gomodfinder"
+
 	"github.com/artarts36/gomodchanger/internal/file"
 	"github.com/artarts36/gomodchanger/internal/replacer"
-	"github.com/artarts36/gomodfinder"
-	"log/slog"
 )
 
 type Command struct {
-	replacer *replacer.Replacer
+	importsReplacer ImportsReplacer
 }
 
 type Params struct {
@@ -19,14 +21,16 @@ type Params struct {
 	ProjectDir string
 }
 
-func NewCommandWithReplacer(replacer *replacer.Replacer) *Command {
+type ImportsReplacer func(goFile *file.File, oldModule, newModule string) error
+
+func NewCommand(importsReplacer ImportsReplacer) *Command {
 	return &Command{
-		replacer: replacer,
+		importsReplacer: importsReplacer,
 	}
 }
 
-func NewCommand() *Command {
-	return NewCommandWithReplacer(replacer.NewReplacer())
+func Default() *Command {
+	return NewCommand(replacer.ReplaceImports)
 }
 
 func (c *Command) Run(ctx context.Context, params Params) error {
@@ -50,7 +54,7 @@ func (c *Command) Run(ctx context.Context, params Params) error {
 	for _, f := range files {
 		slog.InfoContext(ctx, "[cmd] changing module in file", slog.String("file", f.Path))
 
-		err = c.replacer.Replace(f, gomod.Module.Mod.Path, params.NewModule)
+		err = c.importsReplacer(f, gomod.Module.Mod.Path, params.NewModule)
 		if err != nil {
 			return fmt.Errorf("failed to replace go module in file %q: %w", f.Path, err)
 		}

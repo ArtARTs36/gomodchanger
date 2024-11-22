@@ -9,18 +9,10 @@ import (
 	"strings"
 
 	"github.com/artarts36/gds"
-
 	"github.com/artarts36/gomodchanger/internal/file"
 )
 
-type Replacer struct {
-}
-
-func NewReplacer() *Replacer {
-	return &Replacer{}
-}
-
-func (r *Replacer) Replace(goFile *file.File, oldModule, newModule string) error {
+func ReplaceImports(goFile *file.File, oldModule, newModule string) error {
 	fset := token.NewFileSet()
 	parsedFile, err := parser.ParseFile(fset, goFile.Path, nil, parser.ParseComments)
 	if err != nil {

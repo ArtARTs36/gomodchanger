@@ -32,7 +32,7 @@ func main() {
 }
 
 func run(ctx *cli.Context) error {
-	command := cmd.NewCommand()
+	command := cmd.Default()
 
 	projectDir := "./"
 	if pd, ok := ctx.GetOpt("project-dir"); ok {
