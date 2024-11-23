@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+
 	"github.com/artarts36/gomodchanger/pkg/cmd"
 	cli "github.com/artarts36/singlecli"
 )
@@ -9,7 +10,9 @@ import (
 func main() {
 	application := &cli.App{
 		BuildInfo: &cli.BuildInfo{
-			Name: "gomodchanger",
+			Name:      "gomodchanger",
+			Version:   "v0.1.0",
+			BuildDate: "23-11-2024 15:30",
 		},
 		Args: []*cli.ArgDefinition{
 			{
