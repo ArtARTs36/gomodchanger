@@ -13,6 +13,7 @@ import (
 
 type Command struct {
 	importsReplacer ImportsReplacer
+	modReplacer     ModReplacer
 }
 
 type Params struct {
@@ -22,15 +23,20 @@ type Params struct {
 }
 
 type ImportsReplacer func(goFile *file.File, oldModule, newModule string) error
+type ModReplacer func(modFile *gomodfinder.ModFile, newModule string) error
 
-func NewCommand(importsReplacer ImportsReplacer) *Command {
+func NewCommand(
+	importsReplacer ImportsReplacer,
+	modReplacer ModReplacer,
+) *Command {
 	return &Command{
 		importsReplacer: importsReplacer,
+		modReplacer:     modReplacer,
 	}
 }
 
 func Default() *Command {
-	return NewCommand(replacer.ReplaceImports)
+	return NewCommand(replacer.ReplaceImports, replacer.ReplaceModule)
 }
 
 func (c *Command) Run(ctx context.Context, params Params) error {
@@ -58,6 +64,12 @@ func (c *Command) Run(ctx context.Context, params Params) error {
 		if err != nil {
 			return fmt.Errorf("failed to replace go module in file %q: %w", f.Path, err)
 		}
+	}
+
+	slog.InfoContext(ctx, "[cmd] changing go.mod")
+	err = c.modReplacer(gomod, params.NewModule)
+	if err != nil {
+		return fmt.Errorf("failed to replace go.mod: %w", err)
 	}
 
 	return nil
