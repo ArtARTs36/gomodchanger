@@ -39,7 +39,7 @@ func ReplaceImports(goFile *file.File, oldModule, newModule string) error {
 		return nil
 	}
 
-	f, err := os.OpenFile(goFile.Path, os.O_RDWR, 0755)
+	f, err := os.OpenFile(goFile.Path, os.O_RDWR|os.O_TRUNC, 0755)
 	if err != nil {
 		return fmt.Errorf("failed to open file %q: %w", goFile.Path, err)
 	}
