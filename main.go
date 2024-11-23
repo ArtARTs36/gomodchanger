@@ -24,6 +24,11 @@ func main() {
 				Description: "path to project directory",
 				WithValue:   true,
 			},
+			{
+				Name:        "nested",
+				Description: "replace also requirements to nested modules",
+				WithValue:   false,
+			},
 		},
 		Action: run,
 	}
@@ -40,7 +45,8 @@ func run(ctx *cli.Context) error {
 	}
 
 	return command.Run(ctx.Context, cmd.Params{
-		NewModule:  ctx.Args["new-module"],
-		ProjectDir: projectDir,
+		NewModule:            ctx.Args["new-module"],
+		ProjectDir:           projectDir,
+		ReplaceNestedModules: ctx.HasOpt("nested"),
 	})
 }

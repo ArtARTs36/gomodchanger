@@ -20,10 +20,12 @@ type Params struct {
 	NewModule string
 
 	ProjectDir string
+
+	ReplaceNestedModules bool // replace requirements to nested modules
 }
 
 type ImportsReplacer func(goFile *file.File, oldModule, newModule string) error
-type ModReplacer func(modFile *gomodfinder.ModFile, newModule string) error
+type ModReplacer func(modFile *gomodfinder.ModFile, newModule string, replaceNestedModules bool) error
 
 func NewCommand(
 	importsReplacer ImportsReplacer,
@@ -67,7 +69,7 @@ func (c *Command) Run(ctx context.Context, params Params) error {
 	}
 
 	slog.InfoContext(ctx, "[cmd] changing go.mod")
-	err = c.modReplacer(gomod, params.NewModule)
+	err = c.modReplacer(gomod, params.NewModule, params.ReplaceNestedModules)
 	if err != nil {
 		return fmt.Errorf("failed to replace go.mod: %w", err)
 	}
